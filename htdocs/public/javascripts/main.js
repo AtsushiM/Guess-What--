@@ -130,18 +130,15 @@ cssholicqachat.views = {
             });
         },
         events: {
-            '&': {
+            '.q a': {
                 'click': 'qclick'
             }
         },
         qclick: function(e) {
-            var $q;
+            e.preventDefault();
 
-            if (e.target.localName !== 'a') {
-                return;
-            }
+            var $q = C.$(e.target).parent();
 
-            $q = C.$(e.target).parent();
             $q.html('「"' + $q.attr('data-q') + '"と言ったんだ。」と教えてくれました。');
 
             cssholicqachat.socket.emit('rehearquestion', $q.attr('data-from'));
@@ -155,8 +152,6 @@ cssholicqachat.views = {
         },
         render: function(data, index, collection) {
             data = data.get();
-
-            console.log(data);
 
             data.time = cssholicqachat.formatDate(new Date(data.time));
 
@@ -181,6 +176,9 @@ cssholicqachat.views = {
             C.dom.html(li, html);
 
             this.el.insertBefore(li);
+
+            // 描画が切り替わる毎に動作を設定
+            this.reattach();
         }
     })
 };
