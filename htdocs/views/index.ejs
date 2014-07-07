@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link href='http://fonts.googleapis.com/css?family=Sniglet:800' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' href='/css/screen.css' />
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1><%= h1 %></h1>
+    <form action="/" id="send">
+        <p class="username"><input type="text" placeholder="input your name." /></p>
+        <p class="question"><input type="text" placeholder="input question." /></p>
+        <p class="submit"><input type="submit" value="質問する" /></p>
+    </form>
+    <ul id="questions">
+        <li class='loading'>Now Loading...</li>
+    </ul>
+
+<script type="text/template" id="template-question">
+    <%- template_question %>
+</script>
+<script src="/javascripts/lib/cir.min.js"></script>
+<script src="/javascripts/main.js"></script>
+<!-- <script src="/javascripts/main.min.js"></script> -->
+</body>
+</html>
