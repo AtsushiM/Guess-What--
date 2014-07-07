@@ -81,6 +81,9 @@ cssholicqachat.views = {
                 'submit': 'submit'
             }
         },
+        getUserName: function() {
+            return this.username.val() || 'No name';
+        },
         lock: function() {
             this.el.css({
                 opacity: '0.5'
@@ -96,7 +99,7 @@ cssholicqachat.views = {
         submit: function(e) {
             e.preventDefault();
 
-            var name = this.username.val() || 'No name',
+            var name = this.getUserName(),
                 q = this.question.val();
 
             if (this.isLock || !q) {
@@ -134,16 +137,26 @@ cssholicqachat.views = {
         qclick: function(e) {
             var $q;
 
-            if (e.target.localName === 'a') {
-                $q = C.$(e.target).parent();
-                $q.html('「"' + $q.attr('data-q') + '"と言ったんだ。」と教えてくれました。');
+            if (e.target.localName !== 'a') {
+                return;
             }
+
+            $q = C.$(e.target).parent();
+            $q.html('「"' + $q.attr('data-q') + '"と言ったんだ。」と教えてくれました。');
+
+            cssholicqachat.socket.emit('rehearquestion', $q.attr('data-from'));
+            cssholicqachat.socket.emit('rehearquestion', {
+                from: $q.attr('data-from'),
+                q: $q.attr('data-q'),
+            });
         },
         clear: function() {
             this.el.html('');
         },
         render: function(data, index, collection) {
             data = data.get();
+
+            console.log(data);
 
             data.time = cssholicqachat.formatDate(new Date(data.time));
 
@@ -152,6 +165,14 @@ cssholicqachat.views = {
             if (data.nothear === cssholicqachat.socket['socket']['sessionid']) {
                 data.view_q = 'この発言はよく聞こえなかった！聞き返したい？';
                 data.hidden = true;
+            }
+
+            if (!data.name) {
+                data.name = cssholicqachat.views.sendBlock.getUserName();
+            }
+
+            if (!data.from) {
+                data.from = '';
             }
 
             var html = C.template(this.template, data),

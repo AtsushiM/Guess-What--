@@ -85,6 +85,15 @@ io.sockets.on('connection', function(socket) {
             io.sockets.emit('recivequestion', data);
         });
     });
+    socket.on('rehearquestion', function(data) {
+        console.log(data);
+        if (socket.namespace.sockets[data.from]) {
+            socket.namespace.sockets[data.from].emit('recivequestion', {
+                'q': '問い返されたので「' + data['q'] + '」と答えました。',
+                'time': Date.now()
+            });
+        }
+    });
 });
 
 function randamSelect(myid, sockets) {
